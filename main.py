@@ -67,6 +67,12 @@ def calc_Bfield(Ex,Ey,Ez,Bx,By,Bz):
 
 
 def plot2Dfield(field2D,t):
+    if t ==1:
+        #plot settings
+        plt.colorbar () # カラーバーの表示
+        plt.xlabel('X')
+        plt.ylabel('Y')
+    
     plt.imshow(field2D)
     time_now = "Time: " + str(round(t*dt,2))
     plt.title(time_now)
@@ -119,11 +125,6 @@ for t in range(simulation_time):
     E_2D = E[half_nx,:,:]
 
     plot2Dfield(E_2D,t)
-    if t ==1:
-        #plot settings
-        plt.colorbar () # カラーバーの表示
-        plt.xlabel('X')
-        plt.ylabel('Y')
     #plot3Dvector(Ex,Ey,Ez,t)
     plt.pause(.01)
 
