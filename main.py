@@ -4,7 +4,6 @@ import numpy as np
 import matplotlib as mpl
 mpl.use('TkAgg')
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d.axes3d import Axes3D
 
 def calc_Efield(Ex,Ey,Ez,Bx,By,Bz):
     #Maxwell-eq
@@ -66,22 +65,22 @@ def calc_Bfield(Ex,Ey,Ez,Bx,By,Bz):
     return Bx,By,Bz
 
 
+def dipole_antenna(Ez,t,amp,freq):
+    Ez[half_nx,half_ny,half_nz] = Ez[half_nx,half_ny,half_nz] + amp*np.sin(freq*t)
+
 def plot2Dfield(field2D,t):
     if t ==1:
         #plot settings
-        plt.colorbar () # カラーバーの表示
-        plt.xlabel('X')
-        plt.ylabel('Y')
+        plt.colorbar() # カラーバーの表示
+        plt.xlabel('X [dx]')
+        plt.ylabel('Y [dy]')
     
-    plt.imshow(field2D)
-    time_now = "Time: " + str(round(t*dt,2))
+    plt.imshow(field2D,cmap='plasma')
+    plt.gca().invert_yaxis()
+    #time_now = "Time: " + str(round(t*dt,2)) + "[dt]"
+    time_now = "Time: " + str(t) + " [dt]"
     plt.title(time_now)
     
-def plot3Dvector(fieldX,fieldY,fieldZ,t):
-    for i in range(0,nx+1,10):
-        for j in range(0,ny+1,10):
-            for k in range(0,nz+1,10):
-                ax.quiver(i,j,k,fieldX[i,j,k],fieldY[i,j,k],fieldZ[i,j,k])
 
 #initial settings
 nx = 100
@@ -99,7 +98,7 @@ inv_dt = 1/dt
 inv_dx = 1/dx 
 inv_dy = 1/dy
 inv_dz = 1/dz
-simulation_time = 100
+simulation_time = 300
 X = np.arange(nx+2) 
 Y = np.arange(nx+2) 
 Z = np.arange(nx+2) 
@@ -117,12 +116,13 @@ Jz = np.zeros((nx+2,ny+2,nz+2))
 
 
 for t in range(simulation_time):
-    Ez[half_nx,half_ny,half_nz-5:half_nx+5] = Ez[half_nx,half_ny,half_nz-5:half_nz+5] + 20*np.sin(0.5*t)
+    dipole_antenna(Ez,t,10,0.5)
     Ex,Ey,Ez = calc_Efield(Ex,Ey,Ez,Bx,By,Bz)
     Bx,By,Bz = calc_Bfield(Ex,Ey,Ez,Bx,By,Bz)
 
     E = np.sqrt(np.square(Ex)+np.square(Ey)+np.square(Ez))
-    E_2D = E[half_nx,:,:]
+    E_2D = E[:,half_ny,:]
+    #E_2D = E[:,:,half_nz]
 
     plot2Dfield(E_2D,t)
     #plot3Dvector(Ex,Ey,Ez,t)
