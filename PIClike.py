@@ -157,7 +157,8 @@ def calc_Position(x,v):
 
 def dipole_antenna(Ez,t,amp,freq):
     #Ez[half_nx,half_ny,half_nz] = Ez[half_nx,half_ny,half_nz] + amp*np.sin(freq*t)
-    Jz[half_nx,half_ny,half_nz] =  amp*np.sin(freq*t)
+    Jz[half_nx,half_ny+5,half_nz] =  amp*np.sin(freq*t)
+    Jz[half_nx,half_ny-5,half_nz] =  amp*np.sin(freq*t)
 
 def plot2Dfield(field2D,t):
     plt.imshow(field2D,cmap='plasma')
@@ -172,6 +173,8 @@ def plot2Dfield(field2D,t):
     plt.clf()
     
 def plot3Dmotion(x_save):
+    fig = plt.figure()
+    ax = Axes3D(fig)
     ax.plot(x_save[0,:],x_save[1,:],x_save[2,:])
     #ax.set_xlim(0, nx)
     #ax.set_ylim(0, ny)
@@ -195,7 +198,7 @@ inv_dt = 1/dt
 inv_dx = 1/dx 
 inv_dy = 1/dy
 inv_dz = 1/dz
-simulation_time = 100
+simulation_time = 1000
 X = np.arange(nx+2) 
 Y = np.arange(nx+2) 
 Z = np.arange(nx+2) 
@@ -216,14 +219,12 @@ v = np.zeros(3)
 
 x_save = np.zeros((3,simulation_time))
 v_save = np.zeros((3,simulation_time))
-fig = plt.figure()
-ax = Axes3D(fig)
 
 #Bz = np.ones((nx+2,ny+2,nz+2))
 #Bz = Bz*10
 #Ez = np.ones((nx+2,ny+2,nz+2))
 #Ez = Ez*10
-x = [half_nx+5,half_ny,half_nz]
+x = [half_nx,half_ny,half_nz]
 #v = [0, 1, 0]
 for t in range(simulation_time):
     print(t)
