@@ -69,14 +69,11 @@ def dipole_antenna(Ez,t,amp,freq):
     Ez[half_nx,half_ny,half_nz] = Ez[half_nx,half_ny,half_nz] + amp*np.sin(freq*t)
 
 def plot2Dfield(field2D,t):
-    if t ==1:
-        #plot settings
-        plt.colorbar() # カラーバーの表示
-        plt.xlabel('X [dx]')
-        plt.ylabel('Y [dy]')
-    
     plt.imshow(field2D,cmap='plasma')
     plt.gca().invert_yaxis()
+    plt.colorbar() # カラーバーの表示
+    plt.xlabel('X [dx]')
+    plt.ylabel('Y [dy]')
     #time_now = "Time: " + str(round(t*dt,2)) + "[dt]"
     time_now = "Time: " + str(t) + " [dt]"
     plt.title(time_now)
@@ -103,6 +100,7 @@ X = np.arange(nx+2)
 Y = np.arange(nx+2) 
 Z = np.arange(nx+2) 
 
+amp = 1
 #memory allocation
 Ex = np.zeros((nx+2,ny+2,nz+2))
 Ey = np.zeros((nx+2,ny+2,nz+2))
@@ -116,15 +114,17 @@ Jz = np.zeros((nx+2,ny+2,nz+2))
 
 
 for t in range(simulation_time):
-    dipole_antenna(Ez,t,10,0.5)
+    dipole_antenna(Ez,t,amp,0.5)
     Ex,Ey,Ez = calc_Efield(Ex,Ey,Ez,Bx,By,Bz)
     Bx,By,Bz = calc_Bfield(Ex,Ey,Ez,Bx,By,Bz)
 
     E = np.sqrt(np.square(Ex)+np.square(Ey)+np.square(Ez))
-    E_2D = E[:,half_ny,:]
+    E_2D = E[:,:,half_nz]
+    E_2D = E_2D/amp
     #E_2D = E[:,:,half_nz]
 
     plot2Dfield(E_2D,t)
     #plot3Dvector(Ex,Ey,Ez,t)
     plt.pause(.01)
+    plt.clf()
 
